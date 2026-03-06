@@ -9,7 +9,7 @@ import { QUESTIONS, AXES } from './data';
    ANALYTICS (구글 시트 연동 Webhook 기반)
    ============================================ */
 // 이 URL은 사용자님이 구글 앱스 스크립트 배포 후 알려주시면 여기 넣을 것입니다.
-const WEBHOOK_URL = '';
+const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyeNk11Kbz3FClCK7KixHlGhbmKOuPGMyT2Bi1X5dGgdhsCE2uiP_88F_kpDBg6r7r0/exec';
 
 // 세션(단일 익명 유저) 식별용 난수
 let sessionId = localStorage.getItem('freakit_session_id');
