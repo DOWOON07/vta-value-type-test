@@ -289,12 +289,14 @@ function App() {
     const params = new URLSearchParams(window.location.search);
     const resultParam = params.get('result');
     if (resultParam && TYPES[resultParam]) {
-      const s = { K: 0, D: 0, A: 0, U: 0, R: 0, B: 0, V: 0, M: 0 };
+      // 공유 링크로 열릴 때 자연스러운 비율(65:35)을 사용하여 레이더/스펙트럼이 100%로 몰빵되지 않게 합니다
+      const dominant = 7, recessive = 3;
+      const s = { K: recessive, D: recessive, A: recessive, U: recessive, R: recessive, B: recessive, V: recessive, M: recessive };
       const arr = resultParam.split('');
-      if(arr[0] === 'K') s.K = 10; else s.D = 10;
-      if(arr[1] === 'A') s.A = 10; else s.U = 10;
-      if(arr[2] === 'R') s.R = 10; else s.B = 10;
-      if(arr[3] === 'V') s.V = 10; else s.M = 10;
+      if(arr[0] === 'K') s.K = dominant; else s.D = dominant;
+      if(arr[1] === 'A') s.A = dominant; else s.U = dominant;
+      if(arr[2] === 'R') s.R = dominant; else s.B = dominant;
+      if(arr[3] === 'V') s.V = dominant; else s.M = dominant;
       setFinalScores(s);
       setStep(2);
     }
@@ -620,10 +622,40 @@ const ResultView = ({ scores }) => {
     Analytics.trackShare('facebook');
   };
 
-  const handleShareInstagram = () => {
-    // Instagram은 텍스트/URL 네이티브 공유가 제한적이므로 이미지 저장 유도
-    alert('Instagram 공유: 아래 "결과 이미지 저장하기" 버튼으로 이미지를 폰에 다운로드한 후, Instagram 스토리나 게시물에 업로드해주세요! 📸');
-    Analytics.trackShare('instagram');
+  const handleShareInstagram = async () => {
+    // 결과 이미지를 생성하여 Web Share API로 인스타그램 스토리에 공유
+    try {
+      const element = document.querySelector('.result-hero');
+      if (!element) throw new Error('no element');
+      const canvas = await html2canvas(element, { scale: 2, useCORS: true, allowTaint: true });
+      
+      // canvas -> blob -> File
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      const file = new File([blob], `VTA_${type}.png`, { type: 'image/png' });
+      
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: 'VTA 가치관 테스트 결과',
+          text: shareText,
+          url: shareUrl,
+          files: [file]
+        });
+        Analytics.trackShare('instagram_native');
+      } else {
+        // 파일 공유 미지원 기기(PC 등)는 이미지 다운로드 후 안내
+        const image = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = `VTA_${type}.png`;
+        link.click();
+        alert('Instagram 공유: 이미지가 저장되었습니다! Instagram 앱을 열어 스토리에 업로드해주세요 📸');
+        Analytics.trackShare('instagram_download');
+      }
+    } catch (err) {
+      console.log('Instagram share error:', err);
+      alert('Instagram 공유: 아래 "결과 이미지 저장하기" 버튼으로 이미지를 저장한 후 Instagram 스토리에 업로드해주세요! 📸');
+      Analytics.trackShare('instagram');
+    }
   };
 
   const handleDeepReport = () => {
