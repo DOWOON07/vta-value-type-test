@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --primary: #1e293b; /* Deep Midnight Navy */
+  --primary-light: #334155;
+  --primary-dark: #0f172a;
+  --accent: #0284c7; /* Professional Sky Blue */
+  --accent-light: #7dd3fc;
+  --bg: #FFFFFF;
+  --bg-card: rgba(255,255,255,0.85);
+  --bg-glass: rgba(255,255,255,0.15);
+  --text: #1e293b;
+  --text-secondary: #475569;
+  --text-light: #94a3b8;
+  --border: rgba(30, 41, 59, 0.1);
+  --shadow-sm: 0 2px 8px rgba(30, 41, 59, 0.05);
+  --shadow-md: 0 8px 24px rgba(30, 41, 59, 0.12);
+  --shadow-lg: 0 16px 48px rgba(30, 41, 59, 0.15);
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-xl: 40px;
+  --color-hero: #0f172a;
+  --color-btn: #1e293b;
+  --agree: #059669; /* Slightly deeper professional green */
+  --disagree: #dc2626; /* Slightly deeper professional red */
+  --neutral: #f1f5f9;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
