@@ -289,15 +289,28 @@ function App() {
     const params = new URLSearchParams(window.location.search);
     const resultParam = params.get('result');
     if (resultParam && TYPES[resultParam]) {
-      // 공유 링크로 열릴 때 자연스러운 비율(65:35)을 사용하여 레이더/스펙트럼이 100%로 몰빵되지 않게 합니다
-      const dominant = 7, recessive = 3;
-      const s = { K: recessive, D: recessive, A: recessive, U: recessive, R: recessive, B: recessive, V: recessive, M: recessive };
-      const arr = resultParam.split('');
-      if(arr[0] === 'K') s.K = dominant; else s.D = dominant;
-      if(arr[1] === 'A') s.A = dominant; else s.U = dominant;
-      if(arr[2] === 'R') s.R = dominant; else s.B = dominant;
-      if(arr[3] === 'V') s.V = dominant; else s.M = dominant;
-      setFinalScores(s);
+      const sp = params.get('s'); // 실제 점수 비율 (KD-AU-RB-VM 각 축 왼쪽 %)
+      if (sp) {
+        // 실제 점수 비율이 있으면 그대로 복원
+        const pcts = sp.split('-').map(Number);
+        const s = {
+          K: pcts[0] || 50, D: 100 - (pcts[0] || 50),
+          A: pcts[1] || 50, U: 100 - (pcts[1] || 50),
+          R: pcts[2] || 50, B: 100 - (pcts[2] || 50),
+          V: pcts[3] || 50, M: 100 - (pcts[3] || 50)
+        };
+        setFinalScores(s);
+      } else {
+        // 점수 정보 없는 구형 링크 호환용
+        const dominant = 7, recessive = 3;
+        const s = { K: recessive, D: recessive, A: recessive, U: recessive, R: recessive, B: recessive, V: recessive, M: recessive };
+        const arr = resultParam.split('');
+        if(arr[0] === 'K') s.K = dominant; else s.D = dominant;
+        if(arr[1] === 'A') s.A = dominant; else s.U = dominant;
+        if(arr[2] === 'R') s.R = dominant; else s.B = dominant;
+        if(arr[3] === 'V') s.V = dominant; else s.M = dominant;
+        setFinalScores(s);
+      }
       setStep(2);
     }
   }, []);
@@ -581,7 +594,12 @@ const ResultView = ({ scores }) => {
     }
   };
 
-  const shareUrl = `${window.location.origin}${window.location.pathname}?result=${type}`;
+  // 실제 점수 비율을 URL에 포함하여 공유 시 동일한 차트가 보이도록 함
+  const kPct = Math.round((scores.K / (scores.K + scores.D)) * 100);
+  const aPct = Math.round((scores.A / (scores.A + scores.U)) * 100);
+  const rPct = Math.round((scores.R / (scores.R + scores.B)) * 100);
+  const vPct = Math.round((scores.V / (scores.V + scores.M)) * 100);
+  const shareUrl = `${window.location.origin}${window.location.pathname}?result=${type}&s=${kPct}-${aPct}-${rPct}-${vPct}`;
   const shareText = `나의 가치관 유형은 [${type}] ${result.title}! 당신의 가치관도 확인해보세요 🔥`;
 
   const handleShareLink = () => {
