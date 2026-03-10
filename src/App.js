@@ -420,6 +420,7 @@ function App() {
       {step === 0 && (
         <div className="landing-page">
           <nav className="vta-topbar">
+            <img src="/favicon.png" alt="VTA logo" className="vta-logo-img" />
             <span className="vta-logo">VTA</span>
             <span className="vta-divider">|</span>
             <span className="vta-label">Value-Type Analysis</span>
@@ -475,7 +476,10 @@ function App() {
       {/* 1. 검사 화면 */}
       {step === 1 && (
         <div className="test-view">
-          <div className="test-top-logo">VTA · Value-Type Analysis</div>
+          <div className="test-top-logo">
+            <img src="/favicon.png" alt="VTA logo" className="vta-logo-img-sm" />
+            VTA · Value-Type Analysis
+          </div>
           <div className="test-header">
             <div className="nav-col">
               {currentPage > 0 && (
