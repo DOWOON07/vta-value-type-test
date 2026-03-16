@@ -11,6 +11,13 @@ import { QUESTIONS, AXES } from './data';
 // 이 URL은 사용자님이 구글 앱스 스크립트 배포 후 알려주시면 여기 넣을 것입니다.
 const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyeNk11Kbz3FClCK7KixHlGhbmKOuPGMyT2Bi1X5dGgdhsCE2uiP_88F_kpDBg6r7r0/exec';
 
+// KST(한국시간) 타임스탬프 반환
+const getKSTTimestamp = () => {
+  const now = new Date();
+  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  return kst.toISOString().replace('Z', '+09:00');
+};
+
 // 세션(단일 익명 유저) 식별용 난수
 let sessionId = localStorage.getItem('freakit_session_id');
 if (!sessionId) {
@@ -32,7 +39,7 @@ const sendToGoogleSheet = async (eventName, eventData = '') => {
         sessionId: sessionId,
         event: eventName,
         data: eventData,
-        timestamp: new Date().toISOString()
+        timestamp: getKSTTimestamp()
       }),
       mode: 'no-cors' // 구글 시트 웹훅 CORS 우회용
     });
@@ -57,11 +64,16 @@ const Analytics = {
     sendToGoogleSheet('TEST_START', '테스트 시작');
   },
   trackComplete(type) {
+    // 같은 세션에서 같은 결과 중복 전송 방지
+    const key = `freakit_tracked_${type}`;
+    if (sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, '1');
+
     const d = this._getAll();
     d.totalCompletes = (d.totalCompletes || 0) + 1;
     d.typeResults = d.typeResults || {};
     d.typeResults[type] = (d.typeResults[type] || 0) + 1;
-    d.lastComplete = new Date().toISOString();
+    d.lastComplete = getKSTTimestamp();
     this._save(d);
     sendToGoogleSheet('TEST_COMPLETE', type);
   },
