@@ -682,12 +682,12 @@ const ResultView = ({ scores }) => {
         link.href = image;
         link.download = `VTA_${type}.png`;
         link.click();
-        alert('Instagram 공유: 이미지가 저장되었습니다! Instagram 앱을 열어 스토리에 업로드해주세요 📸');
+        alert('📸 이미지가 저장되었어요!\n\nInstagram 앱 → 스토리 만들기에서 저장된 이미지를 선택해 공유해보세요 ✨');
         Analytics.trackShare('instagram_download');
       }
     } catch (err) {
       console.log('Instagram share error:', err);
-      alert('Instagram 공유: 아래 "결과 이미지 저장하기" 버튼으로 이미지를 저장한 후 Instagram 스토리에 업로드해주세요! 📸');
+      alert('📸 아래 [결과 이미지 저장하기] 버튼을 눌러 이미지를 저장한 뒤,\nInstagram 스토리에 업로드해서 공유해보세요 ✨');
       Analytics.trackShare('instagram');
     }
   };
@@ -1020,7 +1020,7 @@ const ResultView = ({ scores }) => {
 
       {/* 다시하기 */}
       <div className="action-buttons">
-        <button className="fancy-button restart" onClick={() => window.location.reload()}>
+        <button className="fancy-button restart" onClick={() => window.location.href = '/'}>
           다시 테스트하기
         </button>
       </div>
